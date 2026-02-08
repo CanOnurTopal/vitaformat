@@ -55,6 +55,7 @@
 #include "detail/float_to_str.hpp"
 #include "detail/parse.hpp"
 #include "detail/compile_parse.hpp"
+#include "detail/ensure_fstring.hpp"
 
 #if !defined(VITA_FORMAT_NO_EXCEPTIONS)
 #include <stdexcept>

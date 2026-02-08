@@ -29,7 +29,7 @@ if(VITA_FORMAT_BUILD_TESTS)
 
     include(FetchContent)
     FetchContent_Declare(googletest
-        URL https://github.com/google/googletest/archive/refs/tags/v1.12.0.zip
+        URL https://github.com/google/googletest/archive/refs/tags/v1.12.0.zip #Latest version compliant with c++11
     )
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)  # windows
     FetchContent_MakeAvailable(googletest)
@@ -43,6 +43,15 @@ if(VITA_FORMAT_BUILD_TESTS)
 
     include(GoogleTest)
     gtest_discover_tests(vita_format_tests)
+
+    add_executable(vita_ensure_fstring_test tests/test_ensure_fstring.cpp)
+    target_link_libraries(vita_ensure_fstring_test PRIVATE vita_format GTest::gtest GTest::gtest_main)
+    target_compile_features(vita_ensure_fstring_test PRIVATE cxx_std_14)
+    target_compile_options(vita_ensure_fstring_test PRIVATE
+        $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall -Wextra -pedantic>
+        $<$<CXX_COMPILER_ID:MSVC>:/W4>
+    )
+    gtest_discover_tests(vita_ensure_fstring_test)
 endif()
 
 # benchmarks

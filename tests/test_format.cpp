@@ -1327,6 +1327,44 @@ TEST(BasicFormat, StdStringFormatStringNoArgs) {
 }
 
 // ============================================================================
+// VITA_FORMAT_ENSURE_FSTRING — must be a no-op identity under C++11
+// ============================================================================
+
+#if __cplusplus < 201402L && !(defined(_MSVC_LANG) && _MSVC_LANG >= 201402L)
+
+TEST(EnsureFstring, NoopForValidStrings) {
+    EXPECT_STREQ(VITA_FORMAT_ENSURE_FSTRING(""), "");
+    EXPECT_STREQ(VITA_FORMAT_ENSURE_FSTRING("hello"), "hello");
+    EXPECT_STREQ(VITA_FORMAT_ENSURE_FSTRING("{}"), "{}");
+    EXPECT_STREQ(VITA_FORMAT_ENSURE_FSTRING("{0}"), "{0}");
+    EXPECT_STREQ(VITA_FORMAT_ENSURE_FSTRING("{:d}"), "{:d}");
+    EXPECT_STREQ(VITA_FORMAT_ENSURE_FSTRING("{:.2f}"), "{:.2f}");
+    EXPECT_STREQ(VITA_FORMAT_ENSURE_FSTRING("{:*>10}"), "{:*>10}");
+}
+
+TEST(EnsureFstring, NoopForInvalidStrings) {
+    // Under C++11 the macro is a pure pass-through — even malformed
+    // format strings are returned unchanged (no validation occurs).
+    EXPECT_STREQ(VITA_FORMAT_ENSURE_FSTRING("{"), "{");
+    EXPECT_STREQ(VITA_FORMAT_ENSURE_FSTRING("{abc}"), "{abc}");
+    EXPECT_STREQ(VITA_FORMAT_ENSURE_FSTRING("{:!}"), "{:!}");
+    EXPECT_STREQ(VITA_FORMAT_ENSURE_FSTRING("{0:d:f}"), "{0:d:f}");
+}
+
+TEST(EnsureFstring, NoopPointerIdentity) {
+    // The macro must return the exact same pointer — no copy, no indirection.
+    const char* lit = "{}";
+    EXPECT_EQ(VITA_FORMAT_ENSURE_FSTRING(lit), lit);
+}
+
+TEST(EnsureFstring, NoopAlias) {
+    EXPECT_STREQ(VITA_CFSTRING("{}"), "{}");
+    EXPECT_STREQ(VITA_CFSTRING("{"), "{");
+}
+
+#endif
+
+// ============================================================================
 // Main
 // ============================================================================
 
