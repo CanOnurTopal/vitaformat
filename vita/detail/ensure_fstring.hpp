@@ -121,6 +121,7 @@ struct Check {
 
 #endif
 
+//Provides the user with the ability to verify that a format string is correct at compile time.
 #define VITA_CFSTRING(str) VITA_FORMAT_ENSURE_FSTRING(str)
 
 #undef VITA_FORMAT_ENSURE_FSTRING_AVAILABLE_
